@@ -1677,7 +1677,7 @@ try {
   }
   
   
-  /**
+/**
   * 将管理员在话题中的回复转发回用户。
   */
   async function handleAdminReply(message, env) {
@@ -1756,7 +1756,17 @@ try {
                 animation: message.animation.file_id,
                 caption: message.caption || "",
             });
-        } else {
+        } 
+        // [⭐️ 修复开始] 添加对文件/文档 (txt, yaml, pdf, zip等) 的支持
+        else if (message.document) {
+            await telegramApi(env.BOT_TOKEN, "sendDocument", {
+                chat_id: userId,
+                document: message.document.file_id,
+                caption: message.caption || "",
+            });
+        }
+        // [⭐️ 修复结束]
+        else {
             await telegramApi(env.BOT_TOKEN, "sendMessage", {
                 chat_id: userId,
                 text: "管理员发送了机器人无法直接转发的内容（例如投票或某些特殊媒体）。",
@@ -1787,7 +1797,7 @@ try {
         console.error("Failed to store admin message data for edit tracking:", e?.message || e);
     }
   }
-  
+
   
   // --- 回调查询处理函数 ---
   
